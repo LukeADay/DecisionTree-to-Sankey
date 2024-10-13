@@ -7,6 +7,7 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     author='Luke Day',
+    licence='MIT',
     author_email='luke.alexander.day@gmail.com',
     url='https://github.com/LukeADay/DecisionTree-to-Sankey',
     packages=['decisiontree_to_sankey'],  # Explicitly specify the package
