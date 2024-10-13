@@ -69,6 +69,17 @@ dt_sankey = DecisionTree_to_Sankey(clf, data)
 dt_sankey.create_sankey()  # Displays the interactive Sankey diagram
 ```
 
+**Warning** check the complexity of the tree before plotting. A tree that is too complex will not work - this requires judgement. See the complexity of the trained model:
+
+```
+try:
+    n_leaves = regressor.get_n_leaves()
+    depth = regressor.get_depth()
+    print(f"Regressor is trained with {n_leaves} leaves and depth {depth}.")
+except AttributeError:
+    print("The regressor is not trained (empty).")
+```
+
 ### Output Example
 
 The following is an example of the Sankey diagram output. Nodes overlap initially, but the interactive version allows you to drag nodes around for better readability:
