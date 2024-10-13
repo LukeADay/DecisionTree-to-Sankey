@@ -22,3 +22,4 @@ env/
 
 # Ignore the Conda environment folder
 env/
+myenv
