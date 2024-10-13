@@ -1,12 +1,6 @@
 #%%
 ### Example using the boston housing dataset to demontrate regression
-
-import sys
-import os
-
-# Add src directory to the path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.DecisionTree_To_Sankey import DecisionTree_to_Sankey
+from decisiontree_to_sankey import DecisionTree_to_Sankey
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split

@@ -1,10 +1,7 @@
 #
 ### Example as a script - see ipynb for the same example with more detailed comments
 # %%
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.DecisionTree_To_Sankey import DecisionTree_to_Sankey
+from decisiontree_to_sankey import DecisionTree_to_Sankey
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
