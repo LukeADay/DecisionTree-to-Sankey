@@ -1,49 +1,55 @@
-# Import required libraries
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
 import plotly.graph_objects as go
 from sklearn.tree import _tree
 
-
 class DecisionTree_to_Sankey():
     """
-    Class takes a trained decision tree (regression or classification) and produces a plotly based Sankey Diagram
+    Class to visualize a trained decision tree (regression or classification) as a Plotly-based Sankey diagram.
 
     Inputs:
-        - clf : Trained decision tree
-        - X : the training set to grab the feature names
+        - clf : Trained decision tree (classifier or regressor)
+        - X : Training set (DataFrame) used to grab the feature names
 
     Outputs:
-        - A plotly visualisation, a Sankey diagram showing the movement through nodes and branches to the final predicted class
-
+        - A Plotly Sankey diagram visualizing the tree's structure and predictions.
     """
+    
     def __init__(self, clf, X):
+        if not hasattr(clf, 'tree_'):
+            raise ValueError("The model is not a trained decision tree.")
         if X.empty:
             raise ValueError("Input dataset is empty.")
+        if not isinstance(X, pd.DataFrame):
+            raise ValueError("Input data X should be a pandas DataFrame.")
+
         self.clf = clf
         self.X = X
-        
-    # Extract the decision tree structure
+        self.feature_names = X.columns
         self.tree_ = clf.tree_
 
-    # Function to traverse the tree and collect node information
-    def extract_tree_structure(self, tree, feature_names):
+        # Determine if the tree is a classifier or regressor
+        if hasattr(clf, 'classes_'):
+            self.is_classifier = True
+            self.outcomes = clf.classes_  # Class labels for classification
+        else:
+            self.is_classifier = False
+            self.outcomes = None  # For regression, there are no class labels
+    
+    def extract_tree_structure(self):
         """
-        Internal function to extract tree information for plot
+        Internal function to extract tree structure.
         """
         node_info = []
-        
+
         def recurse(node, depth):
-            if tree.feature[node] != _tree.TREE_UNDEFINED:
-                # Not a leaf node, add to node_info
-                name = feature_names[tree.feature[node]]
-                threshold = tree.threshold[node]
-                node_info.append((depth, name, threshold, tree.children_left[node], tree.children_right[node]))
-                recurse(tree.children_left[node], depth + 1)
-                recurse(tree.children_right[node], depth + 1)
+            if self.tree_.feature[node] != _tree.TREE_UNDEFINED:
+                # Not a leaf node
+                name = self.feature_names[self.tree_.feature[node]]
+                threshold = self.tree_.threshold[node]
+                node_info.append((depth, name, threshold, self.tree_.children_left[node], self.tree_.children_right[node]))
+                recurse(self.tree_.children_left[node], depth + 1)
+                recurse(self.tree_.children_right[node], depth + 1)
             else:
                 # Leaf node
                 node_info.append((depth, "Leaf", None, None, None))
@@ -51,15 +57,15 @@ class DecisionTree_to_Sankey():
         recurse(0, 0)
         return node_info
     
-    def create_sankey(self, title = "Decision Tree Sankey Diagram with Leaf Nodes and Binary Splits"):
+    def create_sankey(self, title="Decision Tree Sankey Diagram"):
         """
-        Method that extracts rules from the decision tree object and feature information from training set X and creates a plotly sankey diagram
+        Creates a Plotly-based Sankey diagram showing the structure of the decision tree.
         
         Inputs:
-            - (Optional) title : the title for the plotly sankey diagram. The default is Decision Tree Sankey Diagram with Leaf Nodes and Binary Splits
+            - (Optional) title : The title of the Sankey diagram.
         """
         # Extract the tree structure
-        node_data = self.extract_tree_structure(self.clf.tree_, self.X.columns)
+        node_data = self.extract_tree_structure()
 
         # Prepare the data for a Sankey diagram
         labels = []
@@ -68,10 +74,6 @@ class DecisionTree_to_Sankey():
         values = []
         hover_text = []  # To store custom hover text for the branches
 
-        # Get the predicted classes for leaf nodes (outcomes)
-        outcomes = self.clf.classes_  # Predicted class labels
-
-        # Fill the Sankey data based on the node structure
         node_id = {}
         counter = 0
 
@@ -79,49 +81,44 @@ class DecisionTree_to_Sankey():
             if name != "Leaf":
                 node_name = f"{name} <= {threshold:.2f}"
             else:
-                # For leaf nodes, add the final predicted outcome
-                node_name = f"Leaf: Class {outcomes[np.argmax(self.tree_.value[idx][0])]}"  # Predicted class for the leaf node
-            
+                # Leaf nodes: show predicted outcome (either class or value)
+                if self.is_classifier:
+                    outcome = f"Class {self.outcomes[np.argmax(self.tree_.value[idx][0])]}"
+                else:
+                    # For regression, show predicted continuous value
+                    outcome = f"Value {np.mean(self.tree_.value[idx][0]):.2f}"
+                node_name = f"Leaf: {outcome}"
+
             if node_name not in node_id:
                 node_id[node_name] = counter
                 labels.append(node_name)
                 counter += 1
-            
+
             # Left branch (True condition)
             if left is not None and name != "Leaf":
-                if node_data[left][1] != "Leaf":
-                    left_name = f"{node_data[left][1]} <= {node_data[left][2]:.2f}"  # Left condition
-                else:
-                    left_name = f"Leaf: Class {outcomes[np.argmax(self.tree_.value[left][0])]}"  # Leaf node outcome
-                
+                left_name = f"{node_data[left][1]} <= {node_data[left][2]:.2f}" if node_data[left][1] != "Leaf" else f"Leaf: {self.outcome_at_node(left)}"
                 if left_name not in node_id:
                     node_id[left_name] = counter
                     labels.append(left_name)
                     counter += 1
-                
                 source.append(node_id[node_name])
                 target.append(node_id[left_name])
                 values.append(1)
-                hover_text.append(f"{name} <= {threshold:.2f} (True)")  # Hover text for the left branch
-            
+                hover_text.append(f"{name} <= {threshold:.2f} (True)")
+
             # Right branch (False condition)
             if right is not None and name != "Leaf":
-                if node_data[right][1] != "Leaf":
-                    right_name = f"{node_data[right][1]} <= {node_data[right][2]:.2f}"  # Right condition
-                else:
-                    right_name = f"Leaf: Class {outcomes[np.argmax(self.tree_.value[right][0])]}"  # Leaf node outcome
-                
+                right_name = f"{node_data[right][1]} <= {node_data[right][2]:.2f}" if node_data[right][1] != "Leaf" else f"Leaf: {self.outcome_at_node(right)}"
                 if right_name not in node_id:
                     node_id[right_name] = counter
                     labels.append(right_name)
                     counter += 1
-                
                 source.append(node_id[node_name])
                 target.append(node_id[right_name])
                 values.append(1)
-                hover_text.append(f"{name} > {threshold:.2f} (False)")  # Correct hover text for the right branch
+                hover_text.append(f"{name} > {threshold:.2f} (False)")
 
-        # Create the Sankey diagram with the correct hover text
+        # Create the Sankey diagram
         fig = go.Figure(go.Sankey(
             node=dict(
                 pad=15,
@@ -134,13 +131,21 @@ class DecisionTree_to_Sankey():
                 target=target,
                 value=values,
                 customdata=hover_text,  # Add custom hover text
-                hovertemplate='%{customdata}<extra></extra>'  # Use custom hover text in hovertemplate
+                hovertemplate='%{customdata}<extra></extra>'  # Use custom hover text
             )
         ))
 
         fig.update_layout(title_text=title, font_size=10)
         self.fig = fig
         fig.show()
-        
 
-
+    def outcome_at_node(self, node):
+        """
+        Returns the predicted outcome at a leaf node.
+        For classifiers, this returns the class with the highest probability.
+        For regressors, this returns the predicted value.
+        """
+        if self.is_classifier:
+            return f"Class {self.outcomes[np.argmax(self.tree_.value[node][0])]}"
+        else:
+            return f"Value {np.mean(self.tree_.value[node][0]):.2f}"
