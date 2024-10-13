@@ -16,6 +16,7 @@ Clone the repository and install the environment in `environment.yml`.
 6. Call the `create_sankey()` method to produce the interactive plotly sankey.
 
 The following shows an example of the output. Although boxes overlap, the interactive version allows nodes the be dragged around:
+
 ![Sankey Diagram](examples/sankey_diagram.png)
 
 
