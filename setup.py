@@ -9,9 +9,8 @@ setup(
     author='Luke Day',
     author_email='luke.alexander.day@gmail.com',
     url='https://github.com/LukeADay/DecisionTree-to-Sankey',
-    packages=find_packages(where='src'),  # Find packages in the 'src' folder
-    package_dir={'': 'src'},              # The root of the package is in the 'src' folder
-    install_requires=[
+    packages=['decisiontree_to_sankey'],  # Explicitly specify the package
+    package_dir={'decisiontree_to_sankey': 'src'},    install_requires=[
         'pandas',
         'numpy',
         'scikit-learn',
