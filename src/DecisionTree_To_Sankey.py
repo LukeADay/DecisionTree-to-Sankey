@@ -21,6 +21,8 @@ class DecisionTree_to_Sankey():
 
     """
     def __init__(self, clf, X):
+        if X.empty:
+            raise ValueError("Input dataset is empty.")
         self.clf = clf
         self.X = X
         
