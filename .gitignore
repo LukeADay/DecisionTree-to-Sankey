@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# CSV files
+*.csv
+
+# Virtual environment
+venv/
+env/
+
+# MacOS system files
+.DS_Store
+
+# Logs and databases
+*.log
+*.sqlite
+
+# Ignore the Conda environment folder
+env/
