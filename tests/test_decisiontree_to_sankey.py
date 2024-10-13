@@ -38,5 +38,22 @@ class TestDecisionTreeToSankey(unittest.TestCase):
         with self.assertRaises(ValueError):  # Ensure that an error is raised for invalid input
             dt_sankey = DecisionTree_to_Sankey(self.clf, empty_data)
 
+    def test_regression_tree(self):
+        # Set up a regression tree
+        from sklearn.tree import DecisionTreeRegressor
+        reg_clf = DecisionTreeRegressor()
+        data = pd.DataFrame({
+            'Feature1': [1, 2, 3, 4],
+            'Feature2': [5, 6, 7, 8]
+        })
+        target = [10, 15, 10, 15]
+        reg_clf.fit(data, target)
+
+        # Create Sankey diagram for regression tree
+        dt_sankey = DecisionTree_to_Sankey(reg_clf, data)
+        dt_sankey.create_sankey()
+        self.assertIsNotNone(dt_sankey.fig)  # Ensure the Sankey figure is created
+
+
 if __name__ == '__main__':
     unittest.main()
