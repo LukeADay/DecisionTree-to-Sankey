@@ -1,6 +1,13 @@
-# DecisionTree-to-Sankey :evergreen_tree: :leaves:
+# DecisionTree-to-Sankey
 
-`DecisionTree-to-Sankey` is a Python library that visualizes decision trees (from scikit-learn) as interactive Sankey diagrams using Plotly. Decision trees are known for their interpretability, but large trees can become hard to read when plotted traditionally. This library presents decision trees as Sankey diagrams, where nodes can be dragged to adjust for overlapping labels, and conditions can be inspected interactively by hovering over the branches.
+[![PyPI version](https://badge.fury.io/py/decisiontree-to-sankey.svg)](https://badge.fury.io/py/decisiontree-to-sankey) [![GitHub issues](https://img.shields.io/github/issues/LukeADay/DecisionTree-to-Sankey)](https://github.com/LukeADay/DecisionTree-to-Sankey/issues)
+
+
+`DecisionTree-to-Sankey` is a Python library (available on Available on PyPI: https://pypi.org/project/decisiontree-to-sankey/).
+
+The library allows the user to visualize decision trees (from scikit-learn) as interactive `plotly` Sankey diagrams. Decision trees are known for their interpretability, but large trees can become hard to read when plotted traditionally. This library presents decision trees as Sankey diagrams, where nodes can be dragged to adjust for overlapping labels, and conditions can be inspected interactively by hovering over the branches.
+
+**Warning:** version 0.1 has been deprecated due to an import bug. This has been fixed with version 0.2.
 
 ## Features
 
