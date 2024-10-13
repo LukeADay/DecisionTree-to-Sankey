@@ -1,44 +1,112 @@
 # DecisionTree-to-Sankey :evergreen_tree: :leaves:
 
-Decision/Classification trees are great for interpretability - allowing us to see the paths of feature values that lead to a predicted outcome. But in practice decision trees are often complex and plotting the tree itself is not always readable due to overlapping text and boxes.
+`DecisionTree-to-Sankey` is a Python library that visualizes decision trees (from scikit-learn) as interactive Sankey diagrams using Plotly. Decision trees are known for their interpretability, but large trees can become hard to read when plotted traditionally. This library presents decision trees as Sankey diagrams, where nodes can be dragged to adjust for overlapping labels, and conditions can be inspected interactively by hovering over the branches.
 
-The `DecisionTree_to_Sankey` class aims to address this by presenting the decision tree as an interactive `plotly` Sankey Diagram. The nodes can be dragged around when labels overlap and the user can hover over branches to see the conditions that lead to each node.
+## Features
+
+* Interactive Sankey Diagram: Visualize decision trees with adjustable nodes and hover-over conditions.
+* Improved Readability: Handles overlapping labels by allowing users to drag nodes.
+* Easy Integration: Use this tool with any decision tree created by `scikit-learn`.
+
+## Installation
+
+* **Option 1**: Installing via `pip` (if published to PyPI)
+Once the package is published on PyPI, you can install it via `pip`:
+
+```
+pip install decisiontree-to-sankey
+```
+
+* **Option 2**: Manual Installation
+Clone the repository and install the environment via conda:
+
+1. Clone the repository:
+
+```
+git clone https://github.com/LukeADay/DecisionTree-to-Sankey.git
+```
+
+2. Create the conda environment:
+```
+conda env create -f environment.yml
+```
+
+3. Activate the environment
+
+```
+conda activate tree-sankey-visualizer
+```
+
+4. Install the package
+
+```
+pip install .
+```
 
 ## Usage
 
-Clone the repository and install the environment in `environment.yml`. 
+### Example Code
+After installing the library, you can import and use it as follows:
 
-1. Clone this repository: `git clone https://github.com/LukeADay/DecisionTree-to-Sankey.git`
-2. Create the conda environment: `conda env create -f environment.yml`
-3. Activate it with `conda activate tree-sankey-visualizer`
-4. Import the `DecisionTree_to_Sankey` class from `src/DecisionTree_To_Sankey`.
-5. Initialise the class by passing it a trained decision tree `clf`.
-6. Call the `create_sankey()` method to produce the interactive plotly sankey.
+```
+from decisiontree_to_sankey import DecisionTree_to_Sankey
+from sklearn.tree import DecisionTreeClassifier
+import pandas as pd
 
-The following shows an example of the output. Although boxes overlap, the interactive version allows nodes the be dragged around:
+# Sample data
+data = pd.DataFrame({
+    'Feature1': [1, 2, 3, 4],
+    'Feature2': [5, 6, 7, 8]
+})
+target = [0, 1, 0, 1]
+
+# Train a decision tree
+clf = DecisionTreeClassifier()
+clf.fit(data, target)
+
+# Create and visualize the Sankey diagram
+dt_sankey = DecisionTree_to_Sankey(clf, data)
+dt_sankey.create_sankey()  # Displays the interactive Sankey diagram
+```
+
+### Output Example
+
+The following is an example of the Sankey diagram output. Nodes overlap initially, but the interactive version allows you to drag nodes around for better readability:
 
 ![Sankey Diagram](examples/sankey_diagram.png)
 
+See `sankey_diagram.html` for an interactive version.
 
-
-**Examples can be found in the `examples` folder**.
-
-## Structure of repository
+## Repository Structure
 
 ```
 ├── LICENSE
 ├── README.md
+├── conda_requirements.txt
 ├── environment.yml
 ├── examples
 │   ├── __init__.py
-│   ├── environment.yml
 │   ├── penguine_dataset_example.ipynb
-│   └── penguine_dataset_example.py
+│   ├── penguine_dataset_example.py
+│   ├── sankey_diagram.html
+│   └── sankey_diagram.png
+├── requirements.txt
+├── setup.py
 ├── src
 │   ├── DecisionTree_To_Sankey.py
 │   ├── __init__.py
+│   └── __pycache__
+│       ├── DecisionTree_To_Sankey.cpython-310.pyc
+│       └── __init__.cpython-310.pyc
 └── tests
-
+    ├── __pycache__
+    │   └── test_decisiontree_to_sankey.cpython-310.pyc
+    └── test_decisiontree_to_sankey.py
 ```
 
-The `DecisionTree_To_Sankey` class creates the sankey diagram. Examples can be found in the examples folder.
+* The src/decisiontree_to_sankey module contains the core `DecisionTree_to_Sankey class`.
+* Examples of how to use the library are available in the examples/ folder.
+* Unit tests are provided in the `tests/` folder.
+
+## License
+This project is licensed under the MIT License - see the `LICENSE` file for details.
