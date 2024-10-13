@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='decisiontree-to-sankey',
-    version='0.1',
+    version='0.2',
     description='A package to visualize decision trees as Sankey diagrams using Plotly.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
