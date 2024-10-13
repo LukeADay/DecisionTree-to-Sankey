@@ -1,2 +1,2 @@
 # src/__init__.py
-from .DecisionTree_To_Sankey import DecisionTree_to_Sankey
+from .decisiontree_to_sankey import DecisionTree_to_Sankey
