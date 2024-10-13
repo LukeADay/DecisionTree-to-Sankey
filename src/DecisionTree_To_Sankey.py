@@ -13,8 +13,8 @@ class DecisionTree_to_Sankey():
     Class takes a trained decision tree (regression or classification) and produces a plotly based Sankey Diagram
 
     Inputs:
-        - Trained decision tree (clf)
-        - (optional) title: the title of the interactive plotly sankey diagram
+        - clf : Trained decision tree
+        - X : the training set to grab the feature names
 
     Outputs:
         - A plotly visualisation, a Sankey diagram showing the movement through nodes and branches to the final predicted class
@@ -31,6 +31,9 @@ class DecisionTree_to_Sankey():
 
     # Function to traverse the tree and collect node information
     def extract_tree_structure(self, tree, feature_names):
+        """
+        Internal function to extract tree information for plot
+        """
         node_info = []
         
         def recurse(node, depth):
@@ -49,7 +52,12 @@ class DecisionTree_to_Sankey():
         return node_info
     
     def create_sankey(self, title = "Decision Tree Sankey Diagram with Leaf Nodes and Binary Splits"):
-
+        """
+        Method that extracts rules from the decision tree object and feature information from training set X and creates a plotly sankey diagram
+        
+        Inputs:
+            - (Optional) title : the title for the plotly sankey diagram. The default is Decision Tree Sankey Diagram with Leaf Nodes and Binary Splits
+        """
         # Extract the tree structure
         node_data = self.extract_tree_structure(self.clf.tree_, self.X.columns)
 
