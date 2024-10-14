@@ -6,4 +6,3 @@ API Documentation
    :undoc-members:
    :private-members: False  # Exclude private/internal members
    :show-inheritance:
-   :noindex:
