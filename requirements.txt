@@ -19,3 +19,4 @@ six==1.16.0
 tenacity==9.0.0
 threadpoolctl==3.5.0
 tzdata==2024.2
+sphinx-rtd-theme
