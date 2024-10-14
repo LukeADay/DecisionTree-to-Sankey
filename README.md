@@ -1,7 +1,7 @@
 # DecisionTree-to-Sankey
 
 [![PyPI version](https://badge.fury.io/py/decisiontree-to-sankey.svg)](https://badge.fury.io/py/decisiontree-to-sankey) [![GitHub issues](https://img.shields.io/github/issues/LukeADay/DecisionTree-to-Sankey)](https://github.com/LukeADay/DecisionTree-to-Sankey/issues)
-
+[![Downloads](https://static.pepy.tech/badge/decisiontree-to-sankey)](https://pepy.tech/project/decisiontree-to-sankey)
 
 `DecisionTree-to-Sankey` is a Python library (available on Available on PyPI: https://pypi.org/project/decisiontree-to-sankey/).
 
