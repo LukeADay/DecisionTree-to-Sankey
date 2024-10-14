@@ -23,3 +23,10 @@ env/
 # Ignore the Conda environment folder
 env/
 myenv
+
+# Ignore build directories
+dist/
+build/
+*.egg-info/
+
+conda_requirements.txt
