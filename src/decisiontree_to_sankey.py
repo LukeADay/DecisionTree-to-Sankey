@@ -5,12 +5,33 @@ from sklearn.tree import _tree
 class DecisionTree_to_Sankey():
     """
     Class to visualize a trained decision tree (regression or classification) as a Plotly-based Sankey diagram.
-    Inputs:
-        - clf : Trained decision tree (classifier or regressor)
-        - X : Training set (DataFrame) used to grab the feature names
-    Outputs:
-        - A Plotly Sankey diagram visualizing the tree's structure and predictions.
+
+    Parameters:
+    -----------
+    clf : DecisionTreeClassifier or DecisionTreeRegressor
+        Trained decision tree model (classifier or regressor) from scikit-learn.
+    X : pd.DataFrame
+        Training dataset used to grab the feature names for visualizing the tree.
+
+    Attributes:
+    -----------
+    clf : DecisionTreeClassifier or DecisionTreeRegressor
+        The trained decision tree model.
+    tree_ : Tree
+        The internal tree structure of the trained model.
+    feature_names : pd.Index
+        Names of the features in the training data.
+    is_classifier : bool
+        Whether the model is a classifier.
+    outcomes : array or None
+        Class labels (for classifiers) or None for regressors.
+
+    Methods:
+    --------
+    create_sankey(title="Decision Tree Sankey Diagram")
+        Generates and displays a Plotly Sankey diagram based on the decision tree.
     """
+
     
     def __init__(self, clf, X):
         if not hasattr(clf, 'tree_'):
@@ -55,9 +76,17 @@ class DecisionTree_to_Sankey():
         """
         Creates a Plotly-based Sankey diagram showing the structure of the decision tree.
         
-        Inputs:
-            - (Optional) title : The title of the Sankey diagram.
+        Parameters:
+        -----------
+        title : str, optional (default="Decision Tree Sankey Diagram")
+            The title of the Sankey diagram.
+
+        Returns:
+        --------
+        None
+            Displays the Sankey diagram in the browser. Figure is also created as an attribute 'fig'
         """
+
         # Extract the tree structure
         node_data = self.extract_tree_structure()
         # Prepare the data for a Sankey diagram
