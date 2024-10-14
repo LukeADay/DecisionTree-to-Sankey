@@ -6,15 +6,15 @@ class DecisionTree_to_Sankey():
     """
     Class to visualize a trained decision tree (regression or classification) as a Plotly-based Sankey diagram.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     clf : DecisionTreeClassifier or DecisionTreeRegressor
         Trained decision tree model (classifier or regressor) from scikit-learn.
     X : pd.DataFrame
         Training dataset used to grab the feature names for visualizing the tree.
 
-    Attributes:
-    -----------
+    Attributes
+    ----------
     clf : DecisionTreeClassifier or DecisionTreeRegressor
         The trained decision tree model.
     tree_ : Tree
@@ -26,11 +26,12 @@ class DecisionTree_to_Sankey():
     outcomes : array or None
         Class labels (for classifiers) or None for regressors.
 
-    Methods:
-    --------
+    Methods
+    -------
     create_sankey(title="Decision Tree Sankey Diagram")
         Generates and displays a Plotly Sankey diagram based on the decision tree.
     """
+
 
     
     def __init__(self, clf, X):
@@ -52,7 +53,7 @@ class DecisionTree_to_Sankey():
             self.is_classifier = False
             self.outcomes = None  # For regression, there are no class labels
     
-    def extract_tree_structure(self):
+    def _extract_tree_structure(self):
         """
         Internal function to extract tree structure.
         """
@@ -74,21 +75,16 @@ class DecisionTree_to_Sankey():
     
     def create_sankey(self, title="Decision Tree Sankey Diagram"):
         """
-        Creates a Plotly-based Sankey diagram showing the structure of the decision tree.
-        
-        Parameters:
-        -----------
-        title : str, optional (default="Decision Tree Sankey Diagram")
-            The title of the Sankey diagram.
+        Creates a Sankey diagram showing the structure of the decision tree.
 
-        Returns:
-        --------
-        None
-            Displays the Sankey diagram in the browser. Figure is also created as an attribute 'fig'
+        Parameters
+        ----------
+        title : str, optional
+            The title of the Sankey diagram. Default is "Decision Tree Sankey Diagram".
         """
 
         # Extract the tree structure
-        node_data = self.extract_tree_structure()
+        node_data = self._extract_tree_structure()
         # Prepare the data for a Sankey diagram
         labels = []
         source = []
@@ -114,7 +110,7 @@ class DecisionTree_to_Sankey():
                 counter += 1
             # Left branch (True condition)
             if left is not None and name != "Leaf":
-                left_name = f"{node_data[left][1]} <= {node_data[left][2]:.2f}" if node_data[left][1] != "Leaf" else f"Leaf: {self.outcome_at_node(left)}"
+                left_name = f"{node_data[left][1]} <= {node_data[left][2]:.2f}" if node_data[left][1] != "Leaf" else f"Leaf: {self._outcome_at_node(left)}"
                 if left_name not in node_id:
                     node_id[left_name] = counter
                     labels.append(left_name)
@@ -125,7 +121,7 @@ class DecisionTree_to_Sankey():
                 hover_text.append(f"{name} <= {threshold:.2f} (True)")
             # Right branch (False condition)
             if right is not None and name != "Leaf":
-                right_name = f"{node_data[right][1]} <= {node_data[right][2]:.2f}" if node_data[right][1] != "Leaf" else f"Leaf: {self.outcome_at_node(right)}"
+                right_name = f"{node_data[right][1]} <= {node_data[right][2]:.2f}" if node_data[right][1] != "Leaf" else f"Leaf: {self._outcome_at_node(right)}"
                 if right_name not in node_id:
                     node_id[right_name] = counter
                     labels.append(right_name)
@@ -153,8 +149,9 @@ class DecisionTree_to_Sankey():
         fig.update_layout(title_text=title, font_size=10)
         self.fig = fig
         fig.show()
-    def outcome_at_node(self, node):
+    def _outcome_at_node(self, node):
         """
+        This is an internal method and should not be called directly by users.
         Returns the predicted outcome at a leaf node.
         For classifiers, this returns the class with the highest probability.
         For regressors, this returns the predicted value.
