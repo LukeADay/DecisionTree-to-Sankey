@@ -1,0 +1,34 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: [3.10.10]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+        environment-file: environment.yml
+        auto-activate-base: false
+
+    - name: Install Dependencies
+      run: |
+        conda install pytest
+        conda install --file requirements.txt  # If there are any additional requirements
+
+    - name: Run Tests
+      run: |
+        pytest
+
