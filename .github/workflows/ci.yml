@@ -16,6 +16,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Check Conda Info and Logs
+      run: |
+        conda info
+        conda list
+        conda config --show-sources  
+
     - name: Set up Conda
       uses: conda-incubator/setup-miniconda@v3
       with:
