@@ -4,7 +4,8 @@ channels:
   - defaults
 dependencies:
   - python=3.10
-  - pytest
-  - numpy
-  - pandas
-
+  - pytest=8.3.3
+  - numpy=2.0.2
+  - pandas=2.2.3
+  - scikit-learn=1.5.2
+  - plotly=5.24.1
