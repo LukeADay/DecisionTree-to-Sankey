@@ -7,11 +7,12 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     author='Luke Day',
-    licence='MIT',
+    license='MIT',
     author_email='luke.alexander.day@gmail.com',
     url='https://github.com/LukeADay/DecisionTree-to-Sankey',
-    packages=['decisiontree_to_sankey'],  # Explicitly specify the package
-    package_dir={'decisiontree_to_sankey': 'src'},    install_requires=[
+    packages=find_packages(where='src'),  # Locate packages in the 'src' directory
+    package_dir={'': 'src'},  # Root-level package mapping to 'src'
+    install_requires=[
         'pandas',
         'numpy',
         'scikit-learn',
