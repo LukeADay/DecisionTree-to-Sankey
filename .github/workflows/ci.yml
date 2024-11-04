@@ -2,9 +2,9 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [main, testing-ci]
+    branches: [main, feature/testing-ci]
   pull_request:
-    branches: [main, testing-ci]
+    branches: [main, feature/testing-ci]
 
 jobs:
   build-and-test:
@@ -16,14 +16,20 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Conda
+    - name: Set up Conda with Mamba
       uses: conda-incubator/setup-miniconda@v3
       with:
         python-version: "${{ matrix.python-version }}"
         environment-file: environment.yml
         auto-activate-base: false
-        use-only-tar-bz2: true  # Ensures stable downloads
-        cache: true  # Enables caching
+        use-only-tar-bz2: true
+        use-mamba: true  # Use Mamba for faster dependency resolution
+
+    - name: Retry Environment Update (if failed)
+      if: failure()
+      run: |
+        echo "Retrying environment setup with Conda..."
+        conda env update --name test --file environment.yml
 
     # Confirm Conda setup for troubleshooting
     - name: Confirm Conda Info
