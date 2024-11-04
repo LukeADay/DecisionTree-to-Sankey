@@ -1,3 +1,4 @@
+# .github/workflows/ci.yml
 name: Continuous Integration
 
 on:
@@ -8,42 +9,39 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest  # Switched to Ubuntu for better Python version compatibility
     strategy:
       matrix:
-        python-version: [3.10]
+        python-version: [3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13]
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    # Remove potential cache for a fresh environment setup
-    - name: Remove Conda Cache
-      run: rm -rf /Users/runner/miniconda3/envs/test
+      # Remove potential Conda cache for a fresh environment setup
+      - name: Remove Conda Cache
+        run: rm -rf /Users/runner/miniconda3/envs/test || true
 
-    # Set up Conda and environment
-    - name: Set up Conda
-      uses: conda-incubator/setup-miniconda@v3
-      with:
-        python-version: "3.10"
-        environment-file: environment.yml
-        activate-environment: test  # Name of the environment in environment.yml
-        auto-activate-base: false
+      # Set up Conda and base environment
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: "${{ matrix.python-version }}"
+          environment-file: environment.yml
+          auto-activate-base: false
 
-    # Confirm Conda environment details for troubleshooting
-    - name: Check Conda Info and Logs
-      run: |
-        conda info
-        conda list
-        conda config --show-sources
+      # Confirm Conda environment details for troubleshooting
+      - name: Check Conda Info and Logs
+        run: |
+          conda info
+          conda list
+          conda config --show-sources
 
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      # Install tox in the Conda environment to manage dependencies and testing
+      - name: Install tox
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox
 
-    - name: Install src package in editable mode
-      run: pip install -e .
-
-    - name: Run Tests
-      run: |
-        conda run -n test pytest
+      # Run tox for each Python version, which will automatically pick up the configuration in tox.ini
+      - name: Run tox tests
+        run: tox

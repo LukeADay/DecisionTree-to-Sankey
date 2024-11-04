@@ -1,11 +1,10 @@
-name: tree-sankey-visualizer
+name: test
 channels:
-  - conda-forge
   - defaults
 dependencies:
   - python=3.10
-  - pytest=8.3.3
-  - numpy=2.0.2
-  - pandas=2.2.3
-  - scikit-learn=1.5.2
-  - plotly=5.24.1
+  - pip
+  - pip:
+      - tox
+      - pytest
+
