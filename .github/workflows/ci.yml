@@ -36,6 +36,7 @@ jobs:
         conda list
         conda config --show-sources
 
-    # Run tests
     - name: Run Tests
-      run: conda run -n test pytest
+      run: |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/src  # Add the src directory to PYTHONPATH
+        conda run -n test pytest
