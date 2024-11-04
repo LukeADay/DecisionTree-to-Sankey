@@ -2,9 +2,9 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [ main, feature/testing-ci ]
+    branches: [main, feature/testing-ci]
   pull_request:
-    branches: [ main, feature/testing-ci ]
+    branches: [main, feature/testing-ci]
 
 jobs:
   build-and-test:
@@ -16,25 +16,26 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    # Remove potential cache for a fresh environment setup
+    - name: Remove Conda Cache
+      run: rm -rf /Users/runner/miniconda3/envs/test
+
+    # Set up Conda and environment
     - name: Set up Conda
       uses: conda-incubator/setup-miniconda@v3
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: "3.10"
         environment-file: environment.yml
+        activate-environment: test  # Name of the environment in environment.yml
         auto-activate-base: false
-        miniconda-version: "latest"
 
+    # Confirm Conda environment details for troubleshooting
     - name: Check Conda Info and Logs
       run: |
         conda info
         conda list
-        conda config --show-sources  
+        conda config --show-sources
 
-    - name: Install Dependencies
-      run: |
-        conda install pytest
-        conda install --file requirements.txt  # If additional requirements exist
-
+    # Run tests
     - name: Run Tests
-      run: |
-        pytest
+      run: pytest
