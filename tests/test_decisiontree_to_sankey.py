@@ -3,12 +3,15 @@ import os
 
 # Add the src directory to the PYTHONPATH
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+import sys
+import os
 
 
 import unittest
 from sklearn.tree import DecisionTreeClassifier
 import pandas as pd
-from src.DecisionTree_To_Sankey import DecisionTree_to_Sankey
+from src import DecisionTree_to_Sankey
+
 
 class TestDecisionTreeToSankey(unittest.TestCase):
     def setUp(self):
