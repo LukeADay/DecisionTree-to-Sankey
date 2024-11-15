@@ -24,16 +24,16 @@ jobs:
         run: |
           python .github/scripts/generate_compatibility_table.py
 
-      - name: Debug Compatibility Table Content
-        run: cat .github/scripts/compatibility_table.md  # Display the generated table content for debugging
-
-      - name: Update README
+      - name: Update README with Compatibility Table
         run: |
-          TABLE=$(cat .github/scripts/compatibility_table.md)
-          echo "Compatibility Table Content:\n$TABLE"  # Debug: print the table content
-          awk -v table="$TABLE" '
+          awk '
             BEGIN { found=0 }
-            /<!--COMPATIBILITY_TABLE_START-->/ { found=1; print; print table; next }
+            /<!--COMPATIBILITY_TABLE_START-->/ {
+              found=1
+              print
+              while ((getline line < ".github/scripts/compatibility_table.md") > 0) print line
+              next
+            }
             /<!--COMPATIBILITY_TABLE_END-->/ { found=0 }
             !found { print }
           ' README.md > README.tmp && mv README.tmp README.md
