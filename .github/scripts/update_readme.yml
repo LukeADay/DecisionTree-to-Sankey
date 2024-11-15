@@ -26,12 +26,13 @@ jobs:
 
       - name: Update README with Compatibility Table
         run: |
-          awk '
+          TABLE_CONTENT=$(cat .github/scripts/compatibility_table.md)
+          awk -v table="$TABLE_CONTENT" '
             BEGIN { found=0 }
             /<!--COMPATIBILITY_TABLE_START-->/ {
               found=1
               print
-              while ((getline line < ".github/scripts/compatibility_table.md") > 0) print line
+              print table
               next
             }
             /<!--COMPATIBILITY_TABLE_END-->/ { found=0 }
