@@ -1,15 +1,23 @@
 name: Update Compatibility Table
 
 on:
-  push:
-    branches: ["testing-ci"]
+  workflow_run:
+    workflows: ["Continuous Integration"]
+    types:
+      - completed
+
+permissions:
+  contents: write  # Grants the workflow permission to push changes
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -22,12 +30,12 @@ jobs:
           python .github/scripts/generate_compatibility_table.py
 
       - name: Debug Compatibility Table Content
-        run: cat .github/scripts/compatibility_table.md
+        run: cat .github/scripts/compatibility_table.md  # Display the generated table content for debugging
 
       - name: Update README
         run: |
           TABLE_CONTENT=$(cat .github/scripts/compatibility_table.md)
-          echo "Compatibility Table Content:\n$TABLE_CONTENT"
+          echo "Compatibility Table Content:\n$TABLE_CONTENT"  # Debug: print the table content
           awk -v table="$TABLE_CONTENT" '
             BEGIN { found=0 }
             /<!--COMPATIBILITY_TABLE_START-->/ { found=1; print; print table; next }
@@ -35,10 +43,22 @@ jobs:
             !found { print }
           ' README.md > README.tmp && mv README.tmp README.md
 
+      - name: Verify README changes
+        run: |
+          echo "Checking for changes in README.md"
+          git diff README.md || echo "No changes detected in README.md"
+
+      - name: Stage README changes
+        run: |
+          git add README.md -f
+          git status  # Shows the status of the staging area for debugging
+
       - name: Commit changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "GitHub Actions"
-          git add README.md -f
           git commit -m "Update compatibility table in README" || echo "Nothing to commit"
-          git push --force
+
+      - name: Push changes
+        run: |
+          git push origin HEAD:${{ github.head_ref || github.ref_name }} --force
