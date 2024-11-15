@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10']  # Test with one version to simplify debugging
+        python-version: ['3.10']  # Test with one version for simplicity
 
     steps:
     - uses: actions/checkout@v3
@@ -20,13 +20,20 @@ jobs:
       uses: conda-incubator/setup-miniconda@v3
       with:
         python-version: "${{ matrix.python-version }}"
-        environment-file: environment.yml
         auto-activate-base: false
         use-mamba: true
 
+    # Remove the existing environment (if it exists) to prevent conflicts
+    - name: Force Remove Existing Environment
+      run: |
+        source $(conda info --base)/etc/profile.d/conda.sh
+        conda env remove --name test || true
+
+    # Debug: Display the content of environment.yml
     - name: Debug Environment File
       run: cat environment.yml
 
+    # Attempt to create a new environment
     - name: Create Conda Environment
       run: |
         source $(conda info --base)/etc/profile.d/conda.sh
