@@ -1,7 +1,10 @@
-name: test
+name: tree-sankey-visualizer
 channels:
   - conda-forge
 dependencies:
-  - python=3.10  # Start with Python 3.10 and test other versions later
-  - pip
-  - pytest
+  - python=3.10
+  - numpy=2.1.3
+  - pandas=2.2.3
+  - scikit-learn=1.5.2
+  - plotly=5.24.1
+  - pytest=8.3.3
