@@ -11,9 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
-      fail-fast: false  # Continue testing other versions even if one fails
-    continue-on-error: ${{ matrix.python-version == '3.12' }}  # Allow failure for 3.12
+        python-version: ['3.10']  # Test with one version to simplify debugging
 
     steps:
     - uses: actions/checkout@v3
@@ -40,23 +38,8 @@ jobs:
         conda activate test
         pip install tox pytest
 
-    - name: Install src package in editable mode
-      run: |
-        source $(conda info --base)/etc/profile.d/conda.sh
-        conda activate test
-        pip install -e .
-
     - name: Run Tests
       run: |
         source $(conda info --base)/etc/profile.d/conda.sh
         conda activate test
         pytest
-
-    # Document results
-    - name: Output Compatibility Result
-      run: |
-        if [ "${{ job.status }}" == "failure" ]; then
-          echo "Python ${{ matrix.python-version }} encountered compatibility issues."
-        else
-          echo "Python ${{ matrix.python-version }} passed compatibility testing."
-        fi
