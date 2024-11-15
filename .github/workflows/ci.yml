@@ -33,12 +33,19 @@ jobs:
     - name: Debug Environment File
       run: cat environment.yml
 
-    # Attempt to create a new environment
+    # Create Conda Environment with scikit-learn in environment.yml
     - name: Create Conda Environment
       run: |
         source $(conda info --base)/etc/profile.d/conda.sh
-        conda env create --file environment.yml --verbose
+        conda env create --file environment.yml --name test --verbose
 
+    # Verify Environment Creation
+    - name: List Conda Environments
+      run: |
+        source $(conda info --base)/etc/profile.d/conda.sh
+        conda info --envs  # Lists all environments to confirm 'test' exists
+
+    # Install pip dependencies explicitly
     - name: Install Pip Dependencies
       run: |
         source $(conda info --base)/etc/profile.d/conda.sh
