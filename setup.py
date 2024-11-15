@@ -18,7 +18,22 @@ setup(
         "scikit-learn>=0.24.0,<=1.5.2",
         "plotly>=5.0.0,<=5.24.1",
     ],
+    extras_require={
+        "testing": ["pytest>=6.0"],
+        "dev": ["black", "flake8", "mypy"]
+    },
     python_requires='>=3.6',
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ]
 )
 
 from setuptools import setup, find_packages
@@ -38,14 +53,17 @@ setup(
     ],
     extras_require={
         "testing": ["pytest>=6.0"],
+        "dev": ["black", "flake8", "mypy"]
     },
     classifiers=[
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Developers",
-        "Intended Audience :: Science/Research",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3",
-        "Topic :: Scientific/Engineering :: Visualization",
     ]
 )

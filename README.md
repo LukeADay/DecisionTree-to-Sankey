@@ -1,12 +1,36 @@
 # DecisionTree-to-Sankey
 
 [![PyPI version](https://badge.fury.io/py/decisiontree-to-sankey.svg)](https://badge.fury.io/py/decisiontree-to-sankey) [![GitHub issues](https://img.shields.io/github/issues/LukeADay/DecisionTree-to-Sankey)](https://github.com/LukeADay/DecisionTree-to-Sankey/issues) [![Downloads](https://static.pepy.tech/badge/decisiontree-to-sankey)](https://pepy.tech/project/decisiontree-to-sankey) [![Continuous Integration](https://github.com/LukeADay/DecisionTree-to-Sankey/actions/workflows/ci.yml/badge.svg)](https://github.com/LukeADay/DecisionTree-to-Sankey/actions/workflows/ci.yml)
+![Compatibility Test](https://github.com/LukeADay/DecisionTree-to-Sankey/actions/workflows/ci.yml/badge.svg)
+
 
 `DecisionTree-to-Sankey` is a Python library (available on Available on PyPI: https://pypi.org/project/decisiontree-to-sankey/).
 
 The library allows the user to visualize decision trees (from scikit-learn) as interactive `plotly` Sankey diagrams. Decision trees are known for their interpretability, but large trees can become hard to read when plotted traditionally. This library presents decision trees as Sankey diagrams, where nodes can be dragged to adjust fora overlapping labels, and conditions can be inspected interactively by hovering over the branches.
 
 **Warning:** version 0.1 has been deprecated due to an import bug. This has been fixed with version 0.2.
+
+## Compatibility Table
+
+| Python Version | Compatibility | Last Tested        |
+|----------------|---------------|--------------------|
+<!--COMPATIBILITY_TABLE_START-->
+| 3.7            | -             | -                 |
+| 3.8            | -             | -                 |
+| 3.9            | -             | -                 |
+| 3.10           | -             | -                 |
+| 3.11           | -             | -                 |
+| 3.12           | -             | -                 |
+<!--COMPATIBILITY_TABLE_END-->
+
+
+## Dependencies
+
+This package requires the following Python libraries:
+
+<!--DEPENDENCIES_START-->
+<!--DEPENDENCIES_END-->
+
 
 ## Features
 
