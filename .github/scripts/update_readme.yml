@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}  # Checks out the branch where the workflow was triggered
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -47,4 +49,7 @@ jobs:
           git config --local user.name "GitHub Actions"
           git add README.md -f  # Force add to ensure it's staged
           git commit -m "Update compatibility table in README" || echo "Nothing to commit"
-          git push --force
+
+      - name: Push changes
+        run: |
+          git push origin HEAD:${{ github.head_ref || github.ref_name }} --force  # Pushes to the correct branch
