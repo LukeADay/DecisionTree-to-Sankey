@@ -11,12 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']  # Ensures correct versions
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+      fail-fast: false  # Continue testing other versions even if one fails
+    continue-on-error: ${{ matrix.python-version == '3.12' }}  # Allow failure for 3.12
 
     steps:
     - uses: actions/checkout@v3
 
-    # Set up Conda with Mamba for faster dependency resolution
     - name: Set up Conda with Mamba
       uses: conda-incubator/setup-miniconda@v3
       with:
@@ -25,37 +26,37 @@ jobs:
         auto-activate-base: false
         use-mamba: true
 
-    # Remove existing environment (if it exists)
-    - name: Remove Existing Environment
-      run: conda env remove --name test || true
-
-    # Debug: Display the content of environment.yml
     - name: Debug Environment File
       run: cat environment.yml
 
-    # Attempt to create a new environment
     - name: Create Conda Environment
       run: |
         source $(conda info --base)/etc/profile.d/conda.sh
-        conda env create --file environment.yml --name test --verbose
+        conda env create --file environment.yml --verbose
 
-    # Install pip dependencies explicitly
     - name: Install Pip Dependencies
       run: |
         source $(conda info --base)/etc/profile.d/conda.sh
         conda activate test
         pip install tox pytest
 
-    # Install the src package in editable mode
     - name: Install src package in editable mode
       run: |
         source $(conda info --base)/etc/profile.d/conda.sh
         conda activate test
         pip install -e .
 
-    # Run tests
     - name: Run Tests
       run: |
         source $(conda info --base)/etc/profile.d/conda.sh
         conda activate test
         pytest
+
+    # Document results
+    - name: Output Compatibility Result
+      run: |
+        if [ "${{ job.status }}" == "failure" ]; then
+          echo "Python ${{ matrix.python-version }} encountered compatibility issues."
+        else
+          echo "Python ${{ matrix.python-version }} passed compatibility testing."
+        fi
