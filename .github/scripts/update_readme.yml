@@ -24,20 +24,22 @@ jobs:
         run: |
           python .github/scripts/generate_compatibility_table.py
 
-      - name: Update README with Compatibility Table
+      - name: Debug Compatibility Table Content
+        run: cat .github/scripts/compatibility_table.md  # Display the generated table content for debugging
+
+      - name: Update README
         run: |
           TABLE_CONTENT=$(cat .github/scripts/compatibility_table.md)
+          echo "Compatibility Table Content:\n$TABLE_CONTENT"  # Debug: print the table content
           awk -v table="$TABLE_CONTENT" '
             BEGIN { found=0 }
-            /<!--COMPATIBILITY_TABLE_START-->/ {
-              found=1
-              print
-              print table
-              next
-            }
+            /<!--COMPATIBILITY_TABLE_START-->/ { found=1; print; print table; next }
             /<!--COMPATIBILITY_TABLE_END-->/ { found=0 }
             !found { print }
           ' README.md > README.tmp && mv README.tmp README.md
+
+      - name: Check README changes
+        run: git diff README.md || echo "No changes detected in README.md"
 
       - name: Commit changes
         run: |
@@ -46,4 +48,3 @@ jobs:
           git add README.md -f  # Force add to ensure it's staged
           git commit -m "Update compatibility table in README" || echo "Nothing to commit"
           git push --force
-
