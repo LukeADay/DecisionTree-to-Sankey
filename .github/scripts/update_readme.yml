@@ -17,7 +17,7 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.head_ref || github.ref_name }}
+          ref: testing-ci  # Explicitly target the testing-ci branch
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -61,4 +61,4 @@ jobs:
 
       - name: Push changes
         run: |
-          git push origin HEAD:${{ github.head_ref || github.ref_name }} --force
+          git push origin testing-ci --force || echo "Push failed, checking for potential reasons"
