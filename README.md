@@ -1,7 +1,6 @@
 # DecisionTree-to-Sankey
 
-[![PyPI version](https://badge.fury.io/py/decisiontree-to-sankey.svg)](https://badge.fury.io/py/decisiontree-to-sankey) [![GitHub issues](https://img.shields.io/github/issues/LukeADay/DecisionTree-to-Sankey)](https://github.com/LukeADay/DecisionTree-to-Sankey/issues) [![Downloads](https://static.pepy.tech/badge/decisiontree-to-sankey)](https://pepy.tech/project/decisiontree-to-sankey) [![Continuous Integration](https://github.com/LukeADay/DecisionTree-to-Sankey/actions/workflows/ci.yml/badge.svg)](https://github.com/LukeADay/DecisionTree-to-Sankey/actions/workflows/ci.yml)
-![Compatibility Test](https://github.com/LukeADay/DecisionTree-to-Sankey/actions/workflows/ci.yml/badge.svg)
+[![PyPI version](https://badge.fury.io/py/decisiontree-to-sankey.svg)](https://badge.fury.io/py/decisiontree-to-sankey) [![GitHub issues](https://img.shields.io/github/issues/LukeADay/DecisionTree-to-Sankey)](https://github.com/LukeADay/DecisionTree-to-Sankey/issues) [![Downloads](https://static.pepy.tech/badge/decisiontree-to-sankey)](https://pepy.tech/project/decisiontree-to-sankey) ![Compatibility Test](https://github.com/LukeADay/DecisionTree-to-Sankey/actions/workflows/ci.yml/badge.svg)
 
 
 `DecisionTree-to-Sankey` is a Python library (available on Available on PyPI: https://pypi.org/project/decisiontree-to-sankey/).
@@ -12,15 +11,16 @@ The library allows the user to visualize decision trees (from scikit-learn) as i
 
 ## Compatibility Table
 
+
+<!--COMPATIBILITY_TABLE_START-->
 | Python Version | Compatibility | Last Tested        |
 |----------------|---------------|--------------------|
-<!--COMPATIBILITY_TABLE_START-->
-| 3.7            | -             | -                 |
-| 3.8            | -             | -                 |
-| 3.9            | -             | -                 |
-| 3.10           | -             | -                 |
-| 3.11           | -             | -                 |
-| 3.12           | -             | -                 |
+| 3.7            | ✅ Supported       | November 2024     |
+| 3.8            | ✅ Supported       | November 2024     |
+| 3.9            | ✅ Supported       | November 2024     |
+| 3.10            | ✅ Supported       | November 2024     |
+| 3.11            | ✅ Supported       | November 2024     |
+| 3.12            | ✅ Supported       | November 2024     |
 <!--COMPATIBILITY_TABLE_END-->
 
 
