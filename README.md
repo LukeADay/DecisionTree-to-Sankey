@@ -29,7 +29,10 @@ The library allows the user to visualize decision trees (from scikit-learn) as i
 This package requires the following Python libraries:
 
 <!--DEPENDENCIES_START-->
-
+- `numpy>=1.21.0,<=2.1.3`
+- `pandas>=1.3.0,<=2.2.3`
+- `scikit-learn>=0.24.0,<=1.5.2`
+- `plotly>=5.0.0,<=5.24.1`
 <!--DEPENDENCIES_END-->
 
 
