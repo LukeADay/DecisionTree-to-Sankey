@@ -16,32 +16,39 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Conda with Mamba
-      uses: conda-incubator/setup-miniconda@v3
-      with:
-        python-version: "${{ matrix.python-version }}"
-        auto-activate-base: false
-        use-mamba: true
-
+    # Remove existing environment (if it exists)
     - name: Remove Existing Environment
       run: conda env remove --name test || true
 
+    # Debug: Display the content of environment.yml
     - name: Debug Environment File
       run: cat environment.yml
 
+    # Attempt to create a new environment
     - name: Create Conda Environment
-      run: conda env create --file environment.yml --verbose
+      run: |
+        conda env create --file environment.yml --name test --verbose
 
+    # Debug: Show Conda environment info
+    - name: Debug Conda Info
+      run: |
+        conda info
+        conda env list
+        conda list
+
+    # Install pip dependencies explicitly
     - name: Install Pip Dependencies
       run: |
         conda activate test
         pip install tox pytest
 
+    # Install the src package in editable mode
     - name: Install src package in editable mode
       run: |
         conda activate test
         pip install -e .
 
+    # Run tests
     - name: Run Tests
       run: |
         conda activate test
