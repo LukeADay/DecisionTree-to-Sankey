@@ -37,10 +37,10 @@ class DecisionTree_to_Sankey():
     def __init__(self, clf, X):
         if not hasattr(clf, 'tree_'):
             raise ValueError("The model is not a trained decision tree.")
-        if X.empty:
-            raise ValueError("Input dataset is empty.")
         if not isinstance(X, pd.DataFrame):
             raise ValueError("Input data X should be a pandas DataFrame.")
+        if X.empty:
+            raise ValueError("Input dataset is empty.")
         self.clf = clf
         self.X = X
         self.feature_names = X.columns
@@ -56,21 +56,41 @@ class DecisionTree_to_Sankey():
     def _extract_tree_structure(self):
         """
         Internal function to extract tree structure.
+
+        Returns a list of tuples:
+            (sklearn_node_id, depth, name, threshold, left_child_id, right_child_id, value_sets)
+
+        ``value_sets`` is a dict mapping each feature name to the set of unique
+        training-data values that can reach this node.
         """
+        # At the root every feature has its full set of unique values from X.
+        initial_value_sets = {feat: set(self.X[feat].unique()) for feat in self.feature_names}
+
         node_info = []
-        def recurse(node, depth):
+
+        def recurse(node, depth, value_sets):
             if self.tree_.feature[node] != _tree.TREE_UNDEFINED:
                 # Not a leaf node
                 name = self.feature_names[self.tree_.feature[node]]
                 threshold = self.tree_.threshold[node]
-                node_info.append((depth, name, threshold, self.tree_.children_left[node], self.tree_.children_right[node]))
-                recurse(self.tree_.children_left[node], depth + 1)
-                recurse(self.tree_.children_right[node], depth + 1)
+                left_child = self.tree_.children_left[node]
+                right_child = self.tree_.children_right[node]
+                node_info.append((node, depth, name, threshold, left_child, right_child, value_sets))
+
+                # Left (True) child: feature values <= threshold
+                left_value_sets = dict(value_sets)
+                left_value_sets[name] = {v for v in value_sets[name] if v <= threshold}
+                recurse(left_child, depth + 1, left_value_sets)
+
+                # Right (False) child: feature values > threshold
+                right_value_sets = dict(value_sets)
+                right_value_sets[name] = {v for v in value_sets[name] if v > threshold}
+                recurse(right_child, depth + 1, right_value_sets)
             else:
                 # Leaf node
-                node_info.append((depth, "Leaf", None, None, None))
-        
-        recurse(0, 0)
+                node_info.append((node, depth, "Leaf", None, None, None, value_sets))
+
+        recurse(0, 0, initial_value_sets)
         return node_info
     
     def create_sankey(self, title="Decision Tree Sankey Diagram"):
@@ -85,51 +105,74 @@ class DecisionTree_to_Sankey():
 
         # Extract the tree structure
         node_data = self._extract_tree_structure()
+
+        # Build a mapping from sklearn node ID → index in node_data
+        sklearn_id_to_idx = {nd[0]: i for i, nd in enumerate(node_data)}
+
         # Prepare the data for a Sankey diagram
         labels = []
         source = []
         target = []
         values = []
         hover_text = []  # To store custom hover text for the branches
+
+        # Keyed by sklearn node ID (int) so distinct nodes never merge
         node_id = {}
         counter = 0
-        for idx, (depth, name, threshold, left, right) in enumerate(node_data):
+
+        for nd in node_data:
+            node, depth, name, threshold, left, right, value_sets = nd
+
             if name != "Leaf":
                 node_name = f"{name} <= {threshold:.2f}"
             else:
                 # Leaf nodes: show predicted outcome (either class or value)
-                if self.is_classifier:
-                    outcome = f"Class {self.outcomes[np.argmax(self.tree_.value[idx][0])]}"
-                else:
-                    # For regression, show predicted continuous value
-                    outcome = f"Value {np.mean(self.tree_.value[idx][0]):.2f}"
+                outcome = self._outcome_at_node(node)
                 node_name = f"Leaf: {outcome}"
-            if node_name not in node_id:
-                node_id[node_name] = counter
+
+            if node not in node_id:
+                node_id[node] = counter
                 labels.append(node_name)
                 counter += 1
+
             # Left branch (True condition)
             if left is not None and name != "Leaf":
-                left_name = f"{node_data[left][1]} <= {node_data[left][2]:.2f}" if node_data[left][1] != "Leaf" else f"Leaf: {self._outcome_at_node(left)}"
-                if left_name not in node_id:
-                    node_id[left_name] = counter
+                left_nd = node_data[sklearn_id_to_idx[left]]
+                if left_nd[2] != "Leaf":
+                    left_name = f"{left_nd[2]} <= {left_nd[3]:.2f}"
+                else:
+                    left_name = f"Leaf: {self._outcome_at_node(left)}"
+                if left not in node_id:
+                    node_id[left] = counter
                     labels.append(left_name)
                     counter += 1
-                source.append(node_id[node_name])
-                target.append(node_id[left_name])
-                values.append(1)
-                hover_text.append(f"{name} <= {threshold:.2f} (True)")
+                source.append(node_id[node])
+                target.append(node_id[left])
+                values.append(int(self.tree_.n_node_samples[left]))
+                left_vals = sorted(left_nd[6][name])
+                hover_text.append(
+                    f"{name} <= {threshold:.2f} (True)<br>{name}: {left_vals}"
+                )
+
             # Right branch (False condition)
             if right is not None and name != "Leaf":
-                right_name = f"{node_data[right][1]} <= {node_data[right][2]:.2f}" if node_data[right][1] != "Leaf" else f"Leaf: {self._outcome_at_node(right)}"
-                if right_name not in node_id:
-                    node_id[right_name] = counter
+                right_nd = node_data[sklearn_id_to_idx[right]]
+                if right_nd[2] != "Leaf":
+                    right_name = f"{right_nd[2]} <= {right_nd[3]:.2f}"
+                else:
+                    right_name = f"Leaf: {self._outcome_at_node(right)}"
+                if right not in node_id:
+                    node_id[right] = counter
                     labels.append(right_name)
                     counter += 1
-                source.append(node_id[node_name])
-                target.append(node_id[right_name])
-                values.append(1)
-                hover_text.append(f"{name} > {threshold:.2f} (False)")
+                source.append(node_id[node])
+                target.append(node_id[right])
+                values.append(int(self.tree_.n_node_samples[right]))
+                right_vals = sorted(right_nd[6][name])
+                hover_text.append(
+                    f"{name} > {threshold:.2f} (False)<br>{name}: {right_vals}"
+                )
+
         # Create the Sankey diagram
         fig = go.Figure(go.Sankey(
             node=dict(
